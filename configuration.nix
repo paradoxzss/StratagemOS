@@ -1,5 +1,4 @@
-
-# PARADOXzss07 NixOS Conf
+# StratagemOS conf
 
 { config, pkgs, ... }:
 
@@ -9,33 +8,20 @@
       ./hardware-configuration.nix
     ];
 
-
-#  ___           _   _              _         
-# | _ ) ___  ___| |_| |___  __ _ __| |___ _ _ 
-# | _ \/ _ \/ _ \  _| / _ \/ _` / _` / -_) '_|
-# |___/\___/\___/\__|_\___/\__,_\__,_\___|_|  
-
+# Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.initrd.luks.devices."luks-0056d679-2d11-464b-91a8-8d3a03f67c19".device = "/dev/disk/by-uuid/0056d679-2d11-464b-91a8-8d3a03f67c19";
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-#  _  _     _                  _   _           
-# | \| |___| |___ __ _____ _ _| |_(_)_ _  __ _ 
-# | .` / -_)  _\ V  V / _ \ '_| / / | ' \/ _` |
-# |_|\_\___|\__|\_/\_/\___/_| |_\_\_|_||_\__, |
-#                                        |___/ 
+# Networking
   networking.hostName = "NixOS";
   networking.networkmanager.enable = true;
   # networking.wireless.enable = true; # WPA supplicant
 
 
-#  _                 _        
-# | |   ___  __ __ _| |___ ___
-# | |__/ _ \/ _/ _` | / -_|_-<
-# |____\___/\__\__,_|_\___/__/
-
+# Locales
   # Set your time zone
   time.timeZone = "America/New_York";
 
@@ -55,18 +41,12 @@
   };
 
 
-#  ___  _         _           
-# |   \(_)____ __| |__ _ _  _ 
-# | |) | (_-< '_ \ / _` | || |
-# |___/|_/__/ .__/_\__,_|\_, |
-#           |_|          |__/ 
-
+# Display
   # Enable the X11 windowing system.
     services.xserver.enable = true;
 
-  # Enable GDM & GNOME
+  # Enable GDM
   services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
 
   # Enable DWM + Ricing
    services.xserver.windowManager.dwm = {
@@ -82,18 +62,6 @@
     xkbVariant = "";
   };
 
-  #Enable the Hyprland WM (WIP)
-   programs.hyprland = {
-   enable = true; 
-   xwayland.enable = true;
-  };
-
-  # Hint Electon apps to use wayland
-   environment.sessionVariables = {
-    NIXOS_OZONE_WL = "1";
-    WLR_NO_HARDWARE_CURSORS = "1";
-  };
-  
   # Screen sharing
    services.dbus.enable = true;
    xdg.portal = {
@@ -107,11 +75,7 @@
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
-#    _          _ _     
-#   /_\ _  _ __| (_)___ 
-#  / _ \ || / _` | / _ \
-# /_/ \_\_,_\__,_|_\___/
-
+# Audio
   # Enable sound with pipewire.
   #hardware.pulseaudio.enable = true;
   security.rtkit.enable = true;
@@ -124,70 +88,35 @@
     jack.enable = true;
     };
 
-#  ___         _             
-# / __|_  _ __| |_ ___ _ __  
-# \__ \ || (_-<  _/ -_) '  \ 
-# |___/\_, /__/\__\___|_|_|_|
-#      |__/                  
-
+# System              
   # Enable touchpad support (enabled default in most desktopManagers).
   services.libinput.enable = true;
 
-#  _   _                                       _   
-# | | | |___ ___ _ _   __ _ __ __ ___ _  _ _ _| |_ 
-# | |_| (_-</ -_) '_| / _` / _/ _/ _ \ || | ' \  _|
-#  \___//__/\___|_|   \__,_\__\__\___/\_,_|_||_\__|
+#  User acc
   
 users.users.paradoxzss = {
     isNormalUser = true;
-    description = "PARADOXzss";
+    description = "INSERT_NAME_HERE";
     shell = pkgs.fish;
     extraGroups = [ "networkmanager" "wheel" "audio" "video" "dialout" ];
     packages = with pkgs; [
     ];
   };
 
-	services.fprintd.enable = true;
-
-	services.fprintd.tod.enable = true;
-
-	services.fprintd.tod.driver = pkgs.libfprint-2-tod1-vfs0090;
-
-#  ___ _                  
-# / __| |_ ___ __ _ _ __  
-# \__ \  _/ -_) _` | '  \ 
-# |___/\__\___\__,_|_|_|_|
-
-		programs.steam.enable = true;
-#  ___ _          __         
-# | __(_)_ _ ___ / _|_____ __
-# | _|| | '_/ -_)  _/ _ \ \ /
-# |_| |_|_| \___|_| \___/_\_\
-		  programs.firefox.enable = true;
+# Finger print reading
+services.fprintd.enable = true;
+services.fprintd.tod.enable = true;
+services.fprintd.tod.driver = pkgs.libfprint-2-tod1-vfs0090;
 
 
-#  ___ _    _       _____ _        _ ___  
-# | __(_)__| |_    / / __| |_  ___| | \ \ 
-# | _|| (_-< ' \  | |\__ \ ' \/ -_) | || |
-# |_| |_/__/_||_| | ||___/_||_\___|_|_|| |
-#                  \_\                /_/ 
-		  programs.fish.enable = true;
+# Enable some packages
+programs.steam.enable = true;
+programs.firefox.enable = true;
+programs.fish.enable = true;
 
+nixpkgs.config.allowUnfree = true;
 
-#  _   _       __                             _                    
-# | | | |_ _  / _|_ _ ___ ___   _ __  __ _ __| |____ _ __ _ ___ ___
-# | |_| | ' \|  _| '_/ -_) -_) | '_ \/ _` / _| / / _` / _` / -_|_-<
-#  \___/|_||_|_| |_| \___\___| | .__/\__,_\__|_\_\__,_\__, \___/__/
-#                              |_|                    |___/        
-  		nixpkgs.config.allowUnfree = true;
-
-#     ____             __                        
-#    / __ \____ ______/ /______ _____ ____  _____
-#   / /_/ / __ `/ ___/ //_/ __ `/ __ `/ _ \/ ___/
-#  / ____/ /_/ / /__/ ,< / /_/ / /_/ /  __(__  ) 
-# /_/    \__,_/\___/_/|_|\__,_/\__, /\___/____/  
-#                             /____/             
-  environment.systemPackages = with pkgs; [
+environment.systemPackages = with pkgs; [
 
 	# System ( Required )
  	fish
@@ -196,26 +125,17 @@ users.users.paradoxzss = {
 	picom
 
 	# System ( Non-critical )
-	wofi
-	waybar
 	gparted
 	dolphin
-	hyprland
 	p7zip
-	cava
-	dunst
-	libnotify
-	rofi-wayland
 	arandr
 	pavucontrol
 	kvmtool
-	gnome-tweaks
 	gnupg
 	fprintd
 	
 	# Terminal & terminal tools
 	cool-retro-term
-	kitty
     	fastfetch
 	onefetch
   	btop
@@ -224,17 +144,10 @@ users.users.paradoxzss = {
     	wget
     	git
     	gcc
-    	neovim
-	cbonsai
-	sl
-	lavat
-	figlet
-	cmatrix
-	cowsay
+	neovim
 
 
 	# Programming/coding & langs
-	jetbrains.clion
 	python312
     	openjdk8
     	openjdk17
@@ -242,7 +155,6 @@ users.users.paradoxzss = {
 	rustc
 	rustup
 	vscodium
-	gnome-boxes
 
 	# FS Progs
 	btrfs-progs
@@ -252,22 +164,14 @@ users.users.paradoxzss = {
     	prismlauncher
 	lutris
 	wine
-	superTuxKart
-	superTux
-	chess-tui
-	stockfish
 
 	# Entertainment & media
     	spotify
 	vlc
-	rockbox-utility
 	jellyfin	
 
 	# Creation & productivity
-    	krita
-	libreoffice
-	aseprite
-	bambu-studio
+
 
 	# Fonts, themes, and theming
 	nerdfonts
@@ -277,7 +181,6 @@ users.users.paradoxzss = {
 	font-awesome
 	catppuccin-cursors.mochaDark
 	gruvbox-dark-gtk
-	hyprpaper
 
 	# Torrenting stuff
 	qbittorrent
@@ -288,7 +191,6 @@ users.users.paradoxzss = {
 	discord
 	
 	# Documentation and storage
-	kiwix
  	 ];
 
   system.stateVersion = "24.11";
